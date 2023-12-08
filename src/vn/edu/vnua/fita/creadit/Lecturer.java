@@ -23,13 +23,5 @@ public class Lecturer extends Human {
 		System.out.print("Nhap password: ");
 		password = sc.nextLine();
 		
-	}
-
-	@Override
-	public String toString() {
-		return "Lecturer [password=" + password + ", getAddress()=" + getAddress() + ", getCode()=" + getCode()
-				+ ", getFullName()=" + getFullName() + ", toString()=" + super.toString() + ", getClass()=" + getClass()
-				+ ", hashCode()=" + hashCode() + "]";
-	}
-	
+	}	
 }

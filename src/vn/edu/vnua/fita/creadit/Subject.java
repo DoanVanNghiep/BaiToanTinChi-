@@ -1,5 +1,7 @@
 package vn.edu.vnua.fita.creadit;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Subject {
@@ -7,9 +9,13 @@ public class Subject {
 	private String subjectCode;
 	private String subjectName;
 	private int credit;
-	private float attendanceMark;//chuyên cần
-	private float midExamMark;// giữa kì
-	private float finalExamMark;// cuối kì
+	private float numberOfPoint;
+	private Student student;
+	int startingNumber;
+	private List<Float> weights = new ArrayList<Float>();
+//	private float attendanceMark;//chuyên cần
+//	private float midExamMark;// giữa kì
+//	private float finalExamMark;// cuối kì
 	public String getSubjectCode() {
 		return subjectCode;
 	}
@@ -28,33 +34,12 @@ public class Subject {
 	public void setCredit(int credit) {
 		this.credit = credit;
 	}
-	public float getAttendanceMark() {
-		return attendanceMark;
-	}
-	public void setAttendanceMark(float attendanceMark) {
-		this.attendanceMark = attendanceMark;
-	}
-	public float getMidExamMark() {
-		return midExamMark;
-	}
-	public void setMidExamMark(float midExamMark) {
-		this.midExamMark = midExamMark;
-	}
-	public float getFinalExamMark() {
-		return finalExamMark;
-	}
-	public void setFinalExamMark(float finalExamMark) {
-		this.finalExamMark = finalExamMark;
-	}
-	public Subject(String subjectCode, String subjectName, int credit, float attendanceMark, float midExamMark,
-			float finalExamMark) {
+	public Subject(String subjectCode, String subjectName, int credit,float numberOfPoint) {
 		super();
 		this.subjectCode = subjectCode;
 		this.subjectName = subjectName;
 		this.credit = credit;
-		this.attendanceMark = attendanceMark;
-		this.midExamMark = midExamMark;
-		this.finalExamMark = finalExamMark;
+		this.numberOfPoint = numberOfPoint;
 	}
 	public Subject() {
 		
@@ -66,11 +51,30 @@ public class Subject {
 		this.credit = credit;
 	}
 	
-	public float calSubjectMark() {
-		return attendanceMark*0.1f + midExamMark*0.4f + finalExamMark*0.5f;
+	public float calSubjectMark(List<Float> grades) {
+		 if (grades.size() != weights.size()) {
+	            throw new IllegalArgumentException("Number of grades and weights must be the same");
+	        }
+
+	        float weightedSum = 0;
+	        float totalWeight = 0;
+
+	        for (int i = 0; i < grades.size(); i++) {
+	            float grade = grades.get(i);
+	            float weight = weights.get(i);
+
+	            weightedSum += grade * weight;
+	            totalWeight += weight;
+	        }
+
+	        if (totalWeight == 0.0) {
+	            return 0; // To avoid division by zero
+	        }
+
+	        return weightedSum / totalWeight;
 	}
 	public float calConversionMark() {
-		float subjectMark = calSubjectMark();
+		float subjectMark = calSubjectMark(student.getGrades());
 		float conversionMark = -1;
 		
 		if(subjectMark <= 3.9) {
@@ -124,7 +128,7 @@ public class Subject {
 		return conversionMark;
 	}
 	public String calGrade() {
-		float subjectMark = calSubjectMark();
+		float subjectMark = calSubjectMark(student.getGrades());
 		String  grade = null;
 		if(subjectMark < 0) {
 			grade = "Error ";
@@ -147,27 +151,44 @@ public class Subject {
 		}
 		return grade;
 	}
+
 	@Override
 	public String toString() {
-		return "Subject [subjectCode=" + subjectCode + ", subjectName=" + subjectName + ", credit=" + credit
-				+ ", attendanceMark=" + attendanceMark + ", midExamMark=" + midExamMark + ", finalExamMark="
-				+ finalExamMark + "]";
+		return  "\nsubjectCode=" + subjectCode + ", subjectName=" + subjectName + ", credit=" + credit
+				+ ", calConversionMark()=" + calConversionMark() + ", calGrade()=" + calGrade();
 	}
-	
 	public void Input(Scanner sc) {
-		System.out.print("Nhap ma mon hoc: ");
+		System.out.print("\nNhap ma mon hoc: ");
 		this.subjectCode = sc.nextLine();
 		
 		System.out.print("Nhap ten mon hoc: ");
 		this.subjectName = sc.nextLine();
 		
-		System.out.print("Nhap diem chuyen can: ");
-		this.attendanceMark = Float.parseFloat(sc.nextLine());
+		System.out.print("Nhap so tin chi: ");
+		this.credit = Integer.parseInt(sc.nextLine());
 		
-		System.out.print("Nhap diem giua ki: ");
-		this.midExamMark = Float.parseFloat(sc.nextLine());
-		
-		System.out.print("Nhap diem cuoi ki: ");
-		this.finalExamMark = Float.parseFloat(sc.nextLine());
+		// Số đầu điểm và tỉ lệ phần trăm
+		int sumPersent = 0;
+        System.out.print("Nhập số đầu điểm: ");
+        startingNumber = Integer.parseInt(sc.nextLine());
+        for(int i = 1; i <= startingNumber; i++) {
+        	System.out.print("Nhập tỉ lệ phần trăm cho đầu điểm thứ "+ i +": ");
+        	numberOfPoint = Float.parseFloat(sc.nextLine());
+        	weights.add(numberOfPoint);
+        	// kiểm tra xem có đủ 100% chưa
+        	sumPersent += numberOfPoint;
+        }
+    	if(sumPersent != 100) {
+    		System.out.println("Vẫn chưa đủ 100%.");
+    		return;
+    	}
+        Student student = new Student();
+        // nhập điểm
+        List<Double> pointOfStudent = new ArrayList<Double>();
+        for (int j = 0; j < startingNumber; j++) {
+			System.out.print("Nhập điểm thứ " + (j+1) + ": ");
+			float grade = Float.parseFloat(sc.nextLine());
+			student.addGrade(grade);
+		}
 	}
 }

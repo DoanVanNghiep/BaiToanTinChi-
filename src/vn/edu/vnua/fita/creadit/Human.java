@@ -40,17 +40,17 @@ public class Human {
 	}
 	@Override
 	public String toString() {
-		return "Human [address=" + address + ", code=" + code + ", fullName=" + fullName + "]";
+		return "address=" + address + ", code=" + code + ", fullName=" + fullName;
 	}
 	
 	public void enterInfor(Scanner sc) {
-		System.out.print(" Nhap ma: ");
-		code = sc.nextLine();
+		System.out.print("Nhap ma: ");
+		code = sc.nextLine();sc.nextLine();
 		
-		System.out.print(" Nhap ho ten: ");
+		System.out.print("Nhap ho ten: ");
 		fullName = sc.nextLine();
 		
-		System.out.print(" Nhap dia chi: ");
+		System.out.print("Nhap dia chi: ");
 		address = sc.nextLine();
 	}
 	

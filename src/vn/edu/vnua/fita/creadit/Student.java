@@ -1,12 +1,14 @@
 package vn.edu.vnua.fita.creadit;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
 public class Student extends Human {
 	private List<Subject> subjectList = new ArrayList<Subject>();
 	private String class_;
+	private List<Float> grades = new ArrayList<Float>();
 	public Student(String address, String code, String fullName, String class_) {
 		super(address, code, fullName);
 		this.class_ = class_;
@@ -14,6 +16,12 @@ public class Student extends Human {
 	public Student() {
 		
 	}
+    public List<Float> getGrades() {
+        return grades;
+    }
+    public void addGrade(float grade) {
+        grades.add(grade);
+    }
 	public Student(String code) {
 		super(code);
 	}
@@ -31,7 +39,7 @@ public class Student extends Human {
 		float ts = 0;
 		float ms = 0;
 		for(Subject subject : subjectList) {
-			ts += subject.getCredit()*subject.calSubjectMark();
+			ts += subject.getCredit()*subject.calSubjectMark(grades);
 			ms += subject.getCredit();
 		}
 		return ts/ms;
@@ -44,18 +52,29 @@ public class Student extends Human {
 	}
 	@Override
 	public void enterInfor(Scanner sc) {
+		
+		Subject subject = new Subject();
+		
 		super.enterInfor(sc);
 		System.out.print("Nhap lop: ");
-		class_ = sc.nextLine();  
+		class_ = sc.nextLine();
+		
+		System.out.print("Nhap so mon hoc: ");
+		int n = Integer.parseInt(sc.nextLine());
+		for(int i = 0;i < n; i++) {
+			System.out.print("Nhập môn học thứ "+(i+1)+": ");
+			subject.Input(sc);
+			addSubject(subject);
+		}
 	}
 	@Override
 	public String toString() {
-		return "Student [subjectList=" + subjectList + ", class_=" + class_ + ", calTermAverageMark()="
-				+ calTermAverageMark() + ", getClass_()=" + getClass_() + ", getAddress()=" + getAddress()
-				+ ", getCode()=" + getCode() + ", getFullName()=" + getFullName() + ", toString()=" + super.toString()
-				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + "]";
+		String s = super.toString() + "; Class: " + class_ + "\n";
+		for(Subject subject : subjectList) {
+			s += "\t\t" + subject.toString();
+		}if(!subjectList.isEmpty())
+			s += "\n\t\tTerm average mark: " + calTermAverageMark() + "; ";
+		
+		return s;
 	}
-	
-	
-	
 }
